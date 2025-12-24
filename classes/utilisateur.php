@@ -94,7 +94,7 @@ $resultat = $stmt->execute([
 
 
 if ($resultat) {
-$this->id = $pdo->lastInsertId();
+ 
  return true;
  }
  return false;
@@ -113,36 +113,12 @@ $db= new database();
 $pdo = $db->getPdo();
     
     
-    $sql = "SELECT * FROM utilisateurs WHERE email = :email LIMIT 1";
+    $sql = "SELECT * FROM utilisateurs WHERE email = :email ";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([':email' => $email]);
     
     
-    $data = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    
-    if ($data) {
-        return new utilisateur(
-            $data['id'],
-            $data['nom'],
-            $data['email'],
-            $data['role'],
-            $data['motpasse_hash'],
-            $data['etat'],
-            $data['approuve']
-        );
-    }
-    
-    
-    return null;
-}
-
- 
-
-
-public function verifierMotDePasse($motpass) {
-    
-    return password_verify($motpass, $this->motPasseHash);
 }
 
 
