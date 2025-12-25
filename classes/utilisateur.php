@@ -139,4 +139,11 @@ public function verifierMotDePasse($motpasse) {
 
 }
 
+ 
+ $u = new utilisateur();
+$data = $u->trouverParEmail("admin");
+ 
+
+
+
  ?>

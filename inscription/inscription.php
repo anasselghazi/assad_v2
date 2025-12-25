@@ -6,14 +6,14 @@ $erreurs = [];
 $messageSucces = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Récupération des données
+    
     $nom = trim($_POST['nom'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $motDePasse = $_POST['motDePasse'] ?? '';
     $confirmMotDePasse = $_POST['confirmMotDePasse'] ?? '';
     $role = $_POST['role'] ?? '';
 
-    // ÉTAPE 1 : Vérification champs vides
+    
     if (empty($nom)) {
         $erreurs['nom'] = "Le nom est requis";
     }
@@ -30,14 +30,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erreurs['role'] = "Le rôle est requis";
     }
 
-    // ÉTAPE 2 : Format email
+    
     if (!empty($email)) {
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $erreurs['email'] = "Format email incorrect (ex: nom@test.com)";
         }
     }
 
-    // ÉTAPE 3-4 : Mot de passe fort
+    
     if (!empty($motDePasse)) {
         if (strlen($motDePasse) < 8) {
             $erreurs['motDePasse'] = "Mot de passe trop court (8 caractères minimum)";
@@ -46,14 +46,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // ÉTAPE 5 : Confirmation identique
+    
     if (!empty($motDePasse) && !empty($confirmMotDePasse)) {
         if ($motDePasse !== $confirmMotDePasse) {
             $erreurs['confirmMotDePasse'] = "Les mots de passe ne correspondent pas";
         }
     }
 
-    // ÉTAPE 6-7 : Hash + Création utilisateur
+    
     if (empty($erreurs)) {
         $motPasseHash = password_hash($motDePasse, PASSWORD_DEFAULT);
         $approuve = ($role === 'GUIDE') ? 0 : 1;
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = new utilisateur(null, $nom, $email, $role, $motPasseHash, 1, $approuve);
         
         if ($user->cree()) {
-            $messageSucces = "✅ INSCRIPTION RÉUSSIE ! ID: " . $user->getId();
+            $messageSucces = " INSCRIPTION RÉUSSIE ! ID: " . $user->getId();
         } else {
             $erreurs['general'] = "Erreur création utilisateur";
         }
