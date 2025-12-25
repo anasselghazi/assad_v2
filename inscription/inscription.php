@@ -1,220 +1,122 @@
- <?php
-require_once "../classes/database.php";
-require_once "../classes/utilisateur.php";
+  
 
-$erreurs = [];
-$messageSucces = "";
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
-    $nom = trim($_POST['nom'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $motDePasse = $_POST['motDePasse'] ?? '';
-    $confirmMotDePasse = $_POST['confirmMotDePasse'] ?? '';
-    $role = $_POST['role'] ?? '';
 
-    
-    if (empty($nom)) {
-        $erreurs['nom'] = "Le nom est requis";
-    }
-    if (empty($email)) {
-        $erreurs['email'] = "L'email est requis";
-    }
-    if (empty($motDePasse)) {
-        $erreurs['motDePasse'] = "Le mot de passe est requis";
-    }
-    if (empty($confirmMotDePasse)) {
-        $erreurs['confirmMotDePasse'] = "La confirmation est requise";
-    }
-    if (empty($role)) {
-        $erreurs['role'] = "Le rôle est requis";
-    }
 
-    
-    if (!empty($email)) {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $erreurs['email'] = "Format email incorrect (ex: nom@test.com)";
-        }
-    }
 
-    
-    if (!empty($motDePasse)) {
-        if (strlen($motDePasse) < 8) {
-            $erreurs['motDePasse'] = "Mot de passe trop court (8 caractères minimum)";
-        } else if (!preg_match('/^(?=.*[A-Z])(?=.*\d).{8,}$/', $motDePasse)) {
-            $erreurs['motDePasse'] = "1 majuscule + 1 chiffre requis (ex: Mot12345)";
-        }
-    }
 
-    
-    if (!empty($motDePasse) && !empty($confirmMotDePasse)) {
-        if ($motDePasse !== $confirmMotDePasse) {
-            $erreurs['confirmMotDePasse'] = "Les mots de passe ne correspondent pas";
-        }
-    }
 
-    
-    if (empty($erreurs)) {
-        $motPasseHash = password_hash($motDePasse, PASSWORD_DEFAULT);
-        $approuve = ($role === 'GUIDE') ? 0 : 1;
-        
-        $user = new utilisateur(null, $nom, $email, $role, $motPasseHash, 1, $approuve);
-        
-        if ($user->cree()) {
-            $messageSucces = " INSCRIPTION RÉUSSIE ! ID: " . $user->getId();
-        } else {
-            $erreurs['general'] = "Erreur création utilisateur";
-        }
-    }
-}
-?>
 
-<!DOCTYPE html>
+
+
+
+
+
+  <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <title>Inscription Visiteur/Guide</title>
-    <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            max-width: 500px; 
-            margin: 50px auto; 
-            padding: 20px;
-            background: #f8f9fa;
-        }
-        .form-group { 
-            margin-bottom: 20px; 
-        }
-        label { 
-            display: block; 
-            margin-bottom: 5px; 
-            font-weight: bold; 
-            color: #333;
-        }
-        input, select { 
-            width: 100%; 
-            padding: 12px; 
-            border: 1px solid #ddd; 
-            border-radius: 5px; 
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-        input:focus, select:focus {
-            border-color: #007bff;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0,123,255,0.3);
-        }
-        .erreur { 
-            color: #dc3545; 
-            font-size: 14px; 
-            margin-top: 5px; 
-            display: block;
-        }
-        .succes { 
-            background: #d4edda; 
-            color: #155724; 
-            padding: 15px; 
-            border: 1px solid #c3e6cb; 
-            border-radius: 5px; 
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: bold;
-        }
-        button { 
-            background: #28a745; 
-            color: white; 
-            padding: 15px 30px; 
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            font-size: 16px;
-            width: 100%;
-        }
-        button:hover { 
-            background: #218838; 
-        }
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 30px;
-        }
-        .general-error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASSAD Zoo | Accueil</title>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>📝 Inscription Visiteur/Guide</h1>
+<body class="bg-gradient-to-r from-green-900 to-green-700 font-sans">
 
-    <?php if ($messageSucces): ?>
-        <div class="succes"><?= $messageSucces ?></div>
-    <?php endif; ?>
-
-    <?php if (isset($erreurs['general'])): ?>
-        <div class="general-error"><?= $erreurs['general'] ?></div>
-    <?php endif; ?>
-
-    <?php if (!empty($erreurs) && empty($messageSucces)): ?>
-        <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-            <strong>⚠️ Veuillez corriger les erreurs ci-dessous :</strong>
-        </div>
-    <?php endif; ?>
-
-    <form method="POST">
-        <div class="form-group">
-            <label for="nom">Nom complet :</label>
-            <input type="text" id="nom" name="nom" value="<?= htmlspecialchars($_POST['nom'] ?? '') ?>" placeholder="Ahmed">
-            <?php if (isset($erreurs['nom'])): ?>
-                <span class="erreur"><?= $erreurs['nom'] ?></span>
-            <?php endif; ?>
-        </div>
-
-        <div class="form-group">
-            <label for="email">Email :</label>
-            <input type="email" id="email" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" placeholder="test@test.com">
-            <?php if (isset($erreurs['email'])): ?>
-                <span class="erreur"><?= $erreurs['email'] ?></span>
-            <?php endif; ?>
-        </div>
-
-        <div class="form-group">
-            <label for="motDePasse">Mot de passe (8+ caractères, 1 majuscule, 1 chiffre) :</label>
-            <input type="password" id="motDePasse" name="motDePasse" placeholder="Mot12345">
-            <?php if (isset($erreurs['motDePasse'])): ?>
-                <span class="erreur"><?= $erreurs['motDePasse'] ?></span>
-            <?php endif; ?>
-        </div>
-
-        <div class="form-group">
-            <label for="confirmMotDePasse">Confirmer mot de passe :</label>
-            <input type="password" id="confirmMotDePasse" name="confirmMotDePasse" placeholder="Mot12345">
-            <?php if (isset($erreurs['confirmMotDePasse'])): ?>
-                <span class="erreur"><?= $erreurs['confirmMotDePasse'] ?></span>
-            <?php endif; ?>
-        </div>
-
-        <div class="form-group">
-            <label for="role">Rôle :</label>
-            <select id="role" name="role">
-                <option value="">-- Choisir un rôle --</option>
-                <option value="VISITEUR" <?= ($_POST['role'] ?? '') === 'VISITEUR' ? 'selected' : '' ?>>👤 Visiteur</option>
-                <option value="GUIDE" <?= ($_POST['role'] ?? '') === 'GUIDE' ? 'selected' : '' ?>>🧭 Guide</option>
-            </select>
-            <?php if (isset($erreurs['role'])): ?>
-                <span class="erreur"><?= $erreurs['role'] ?></span>
-            <?php endif; ?>
-        </div>
-
-        <button type="submit">✅ S'INSCRIRE</button>
-    </form>
-
-    <div style="margin-top: 30px; padding: 15px; background: #e9ecef; border-radius: 5px; font-size: 14px;">
-        <strong>🧪 Tests :</strong><br>
-        • Email: <code>test@test.com</code><br>
-        • Mot de passe: <code>Mot12345</code> (8+ chars, majuscule, chiffre)
+<!-- HEADER -->
+<header class="flex justify-between items-center p-6 bg-white shadow-xl">
+    <h1 class="text-3xl font-bold text-green-700">🦁 ASSAD Zoo</h1>
+    <div class="space-x-4">
+        <button onclick="openLogin()" class="px-4 py-2 bg-green-700 text-white rounded-xl font-semibold hover:bg-green-800 transition">Connexion</button>
+        <button onclick="openSignup()" class="px-4 py-2 bg-green-500 text-white rounded-xl font-semibold hover:bg-green-600 transition">S’inscrire</button>
     </div>
+</header>
+
+<!-- MAIN -->
+<main class="text-white text-center py-16 px-4">
+    <h2 class="text-4xl font-bold mb-6">Bienvenue au Zoo Virtuel ASSAD</h2>
+    <p class="text-lg mb-12">Découvrez nos animaux et explorez leurs habitats tout en suivant les statistiques du zoo !</p>
+
+    <!-- STATISTIQUES -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div class="bg-white text-green-700 rounded-2xl p-8 shadow-lg">
+            <h3 class="text-2xl font-bold">120+</h3>
+            <p>Animaux</p>
+        </div>
+        <div class="bg-white text-green-700 rounded-2xl p-8 shadow-lg">
+            <h3 class="text-2xl font-bold">15</h3>
+            <p>Habitats</p>
+        </div>
+        <div class="bg-white text-green-700 rounded-2xl p-8 shadow-lg">
+            <h3 class="text-2xl font-bold">5000+</h3>
+            <p>Visiteurs par mois</p>
+        </div>
+    </div>
+</main>
+
+<!-- LOGIN POPUP -->
+<div id="loginModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 relative">
+        <button onclick="closeLogin()" class="absolute top-3 right-4 text-gray-500 hover:text-red-600 text-lg font-bold">✕</button>
+        <h2 class="text-2xl font-bold text-green-700 mb-4 text-center">Connexion</h2>
+        <form action="inscription.php" method="POST" class="space-y-4">
+    <input type="email" name="email" placeholder="Email" class="w-full border rounded-lg p-2" required>
+    <input type="password" name="password" placeholder="Mot de passe" class="w-full border rounded-lg p-2" required>
+    <button type="submit" name="login" class="w-full bg-green-700 text-white p-2 rounded-lg font-semibold">Se connecter</button>
+</form>
+
+    </div>
+</div>
+
+<!-- SIGNUP POPUP -->
+<div id="signupModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 relative">
+        <button onclick="closeSignup()" class="absolute top-3 right-4 text-gray-500 hover:text-red-600 text-lg font-bold">✕</button>
+        <h2 class="text-2xl font-bold text-green-700 mb-4 text-center">Créer un compte</h2>
+       <form method="POST" action="inscription.php" class="space-y-4">
+    <input type="text" name="nom" placeholder="Nom complet" class="w-full border rounded-lg p-2" required>
+    <input type="email" name="email" placeholder="Email" class="w-full border rounded-lg p-2" required>
+    <input type="password" name="motpasse" placeholder="Mot de passe" class="w-full border rounded-lg p-2" required>
+    <input type="password" name="confirm_motpasse" placeholder="Confirmer mot de passe" class="w-full border rounded-lg p-2" required>
+    <input type="text" name="pays" placeholder="Pays" class="w-full border rounded-lg p-2" required>
+    <select name="role" class="w-full border rounded-lg p-2" required>
+        <option value="">Sélectionnez le rôle</option>
+        <option value="visiteur">Visiteur</option>
+        <option value="guide">Guide</option>
+    </select>
+    <button type="submit" name="signup" class="w-full bg-green-500 text-white p-2 rounded-lg font-semibold">S’inscrire</button>
+</form>
+
+
+
+    </div>
+</div>
+
+<script>
+const loginModal = document.getElementById('loginModal');
+const signupModal = document.getElementById('signupModal');
+
+function openLogin(){
+    loginModal.classList.remove('hidden');
+    loginModal.classList.add('flex');
+    signupModal.classList.add('hidden');
+}
+
+function closeLogin(){
+    loginModal.classList.add('hidden');
+    loginModal.classList.remove('flex');
+}
+
+function openSignup(){
+    signupModal.classList.remove('hidden');
+    signupModal.classList.add('flex');
+    loginModal.classList.add('hidden');
+}
+
+function closeSignup(){
+    signupModal.classList.add('hidden');
+    signupModal.classList.remove('flex');
+}
+</script>
+
 </body>
 </html>
