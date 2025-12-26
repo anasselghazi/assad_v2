@@ -14,8 +14,8 @@ private $motpasse_hash;
 private $etat;
 private $approuve ;
  
- public function  __construct($id = null,$nom = null,$email = null,$role = null,$motpasshash = null,
- $etat=1,$approuve=1)
+ public function  __construct($id = null,$nom = null,$email = null,$role = null,$approuve= null,
+ $motpasshash=NULL,$etat=1)
 {
 $this->id_utilisateur = $id;
 $this->nom=$nom;
@@ -40,14 +40,15 @@ public function getEmail(){
 public function getRole(){
     return $this->role;
 }
+public function getApprouve(){
+    return $this->approuve;
+}
 public function getMotpasshash(){
     return $this->motpasse_hash;
 }
 public function getEtat(){
     return $this->etat;
-}
-public function getApprouve(){
-    return $this->approuve;
+    
 }
 
 /*setters*/
@@ -64,14 +65,14 @@ public function setEmail($email){
 public function setRole($role){
     $this->role=$role;
 }
-public function setMotpasshash($motpasshash){
-$this->motpasse_hash=$motpassehash;
-}
-public  function setEtat($etat){
-    $this->etat=$etat;
-}
 public function setApprouve($approuve){
-    $this->approuve=$approuve;
+$this->approuve=$approuve;
+}
+public  function setMotpasshash($motpasshash){
+    $this->motpasse_hash=$motpasshash;
+}
+public function setEtat($etat){
+    $this->etat=$etat;
 }
  
 public function cree(){
@@ -81,9 +82,9 @@ $db= new database();
 $pdo = $db->getPdo();
 
 
-$sql = "INSERT INTO utilisateurs(nom,email,role,
-motpasse_hash,etat,approuve)
-VALUES(:nom,:email,:role,:motpasse_hash,:etat,:approuve)";
+$sql = "INSERT INTO utilisateurs(nom,email,role,approuve,
+motpasse_hash,etat)
+VALUES(:nom,:email,:role,:approuve,:motpasse_hash,:etat)";
  
 $stmt = $pdo->prepare($sql);
 
@@ -93,8 +94,8 @@ $stmt->bindParam(':role',$this->role);
 $stmt->bindParam(':approuve',$this->approuve);
 $stmt->bindParam(':motpasse_hash',$this->motpasse_hash);
 $stmt->bindParam(':etat',$this->etat);
-
-$resultat=$stmt->execute();
+//var_dump($this->nom, $this->email, $this->role, $this->etat); die();
+$result=$stmt->execute();
 
 if ($resultat) {
  
@@ -123,8 +124,8 @@ $stmt->execute();
 $result=$stmt->fetch(PDO::FETCH_ASSOC);
 if($result){
 return new utilisateur($result['id_utilisateur'],$result['nom'],
-  $result['email'], $result['role'], $result['motpasse_hash'],
-  $result['etat'],$result['approuve']);
+  $result['email'], $result['role'], $result['approuve'],
+  $result['motpasse_hash'],$result['etat']);
 
 }
    
@@ -140,10 +141,7 @@ public function verifierMotDePasse($motpasse) {
 }
 
  
- $u = new utilisateur();
-$data = $u->trouverParEmail("admin");
- 
-
+  
 
 
  ?>

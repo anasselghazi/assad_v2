@@ -1,18 +1,90 @@
-  
+ <?php
+// inscription.php - Challenge 4 COMPLET
+require_once '../classes/database.php';
+require_once '../classes/utilisateur.php';
 
+// 1️⃣ TRAITEMENT DU FORMULAIRE (si soumis)
+$erreurs = [];
+$success = '';
 
-
-
-
-
-
-
-
-
-
-
-
-  <!DOCTYPE html>
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    
+    // 2️⃣ RÉCUPÉRER LES DONNÉES
+    $nom = trim($_POST['nom'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $mot_de_passe = $_POST['mot_de_passe'] ?? '';
+    $confirm_mot_de_passe = $_POST['confirm_mot_de_passe'] ?? '';
+    $role = $_POST['role'] ?? 'VISITEUR';
+    
+    // 3️⃣ VALIDATIONS CÔTÉ SERVEUR
+    if (empty($nom)) {
+        $erreurs['nom'] = 'Le nom est obligatoire.';
+    }
+    
+    if (empty($email)) {
+        $erreurs['email'] = 'L\'email est obligatoire.';
+    } elseif (!preg_match('/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', $email)) {
+        $erreurs['email'] = 'Format email invalide.';
+    }
+    
+    if (empty($mot_de_passe)) {
+        $erreurs['mot_de_passe'] = 'Le mot de passe est obligatoire.';
+    } elseif (strlen($mot_de_passe) < 8) {
+        $erreurs['mot_de_passe'] = 'Minimum 8 caractères.';
+    } elseif (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/', $mot_de_passe)) {
+        $erreurs['mot_de_passe'] = '1 majuscule + 1 minuscule + 1 chiffre.';
+    }
+    
+    if ($mot_de_passe !== $confirm_mot_de_passe) {
+        $erreurs['confirm_mot_de_passe'] = 'Les mots de passe ne correspondent pas.';
+    }
+    
+    // 4️⃣ SI AUCUNE ERREUR → CRÉER UTILISATEUR
+    if (empty($erreurs)) {
+        // Hasher le mot de passe
+        $mot_passe_hash = password_hash($mot_de_passe, PASSWORD_DEFAULT);
+        
+        // Définir approuve selon rôle
+        $approuve = ($role === 'GUIDE') ? 0 : 1;
+        
+        // Créer objet Utilisateur
+        $Utilisateur = new utilisateur(
+            null, $nom, $email, $role,
+            $mot_passe_hash, 1, $approuve
+        );
+        
+        // Enregistrer en base
+        if ($Utilisateur->cree()) {
+            $success = "✅ Inscription réussie ! ID: " . $Utilisateur->getId();
+        } else {
+            $erreurs['general'] = 'Erreur lors de l\'inscription.';
+        }
+    }
+}
+?>
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -27,7 +99,7 @@
     <h1 class="text-3xl font-bold text-green-700">🦁 ASSAD Zoo</h1>
     <div class="space-x-4">
         <button onclick="openLogin()" class="px-4 py-2 bg-green-700 text-white rounded-xl font-semibold hover:bg-green-800 transition">Connexion</button>
-        <button onclick="openSignup()" class="px-4 py-2 bg-green-500 text-white rounded-xl font-semibold hover:bg-green-600 transition">S’inscrire</button>
+        <button onclick="openSignup()" class="px-4 py-2 bg-green-500 text-white rounded-xl font-semibold hover:bg-green-600 transition">S'inscrire</button>
     </div>
 </header>
 
@@ -77,13 +149,12 @@
     <input type="email" name="email" placeholder="Email" class="w-full border rounded-lg p-2" required>
     <input type="password" name="motpasse" placeholder="Mot de passe" class="w-full border rounded-lg p-2" required>
     <input type="password" name="confirm_motpasse" placeholder="Confirmer mot de passe" class="w-full border rounded-lg p-2" required>
-    <input type="text" name="pays" placeholder="Pays" class="w-full border rounded-lg p-2" required>
     <select name="role" class="w-full border rounded-lg p-2" required>
         <option value="">Sélectionnez le rôle</option>
         <option value="visiteur">Visiteur</option>
         <option value="guide">Guide</option>
     </select>
-    <button type="submit" name="signup" class="w-full bg-green-500 text-white p-2 rounded-lg font-semibold">S’inscrire</button>
+    <button type="submit" name="signup" class="w-full bg-green-500 text-white p-2 rounded-lg font-semibold">S'inscrire</button>
 </form>
 
 

@@ -89,11 +89,38 @@ public function setIdHabitat($id_habitat)
  {
      $this->id_habitat = $id_habitat; 
     }
+      public static function listerTous() {
+        $db= new database();
+        $pdo = $db->getPdo();
+        $sql = "SELECT a.*, h.nom as habitat_nom 
+                FROM animaux a 
+                LEFT JOIN habitats h ON a.id_habitat = h.id_habitat 
+                ORDER BY a.nom";
+        $stmt = $pdo->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    public static function listerParHabitat($id_habitat) {
+        $db= new database();
+        $pdo = $db->getPdo();
+        
+        $sql = "SELECT a.*, h.nom as habitat_nom 
+                FROM animaux a 
+                LEFT JOIN habitats h ON a.id_habitat = h.id_habitat 
+                WHERE a.id_habitat = ? 
+                ORDER BY a.nom";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$id_habitat]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
+
+
+
 }
  
-$lio=new animal(null,"lion",null,null,null,null,null,null);
-
-echo $lio->getNom();
+ 
 
 
 

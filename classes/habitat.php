@@ -12,7 +12,7 @@ class Habitat {
     public function __construct($id = null, $nom = null, $climate = null, $description = null,$zone=null) {
         $this->id_habitat = $id;
         $this->nom = $nom;
-        $this->type_climate = $climte;
+        $this->type_climate = $climate;
         $this->description= $description;
         $this->zon_zoo=$zoo;
     }
@@ -57,7 +57,27 @@ class Habitat {
          $this->description=$description;
     }
 
+    public function ListerTous(){
+     $db=new database();
+     $pdo=$db->getPdo();
+
+
+    $sql="SELECT*FROM habitats";
+    $stmt = $pdo->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
+
+    }
+
+
+
+
+
+
+
+
+    
 
 ?>
  
