@@ -95,7 +95,7 @@ $stmt->bindParam(':approuve',$this->approuve);
 $stmt->bindParam(':motpasse_hash',$this->motpasse_hash);
 $stmt->bindParam(':etat',$this->etat);
 //var_dump($this->nom, $this->email, $this->role, $this->etat); die();
-$result=$stmt->execute();
+$resultat=$stmt->execute();
 
 if ($resultat) {
  
@@ -117,8 +117,8 @@ $pdo = $db->getPdo();
 $sql = "SELECT * FROM utilisateurs WHERE email = :email  limit 1";
 $stmt = $pdo->prepare($sql);
 
-$stmt->bindParam(':email',$this->email);
 
+$stmt->bindParam(':email', $email);
 $stmt->execute();
 
 $result=$stmt->fetch(PDO::FETCH_ASSOC);

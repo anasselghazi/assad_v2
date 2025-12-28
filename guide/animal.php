@@ -17,39 +17,24 @@
     <a href="lion.php" class="block hover:bg-green-700 p-2 rounded">Lion de l’Atlas</a>
     <a href="visites.php" class="block hover:bg-green-700 p-2 rounded">Visites guidées</a>
     <a href="reservation.php" class="block hover:bg-green-700 p-2 rounded">Mes réservations</a>
-        <a href="deconnexion.php" class="block hover:bg-green-700 p-2 rounded">Mes réservations</a>
-
+    <a href="deconnexion.php" class="block hover:bg-green-700 p-2 rounded">Mes réservations</a>
   </nav>
 </aside>
 
-
-<!-- (paste sidebar here) -->
-
 <main class="flex-1 p-10">
-  <h2 class="text-3xl font-bold text-green-800 mb-4">
-    Bienvenue au Zoo Virtuel ASSAD 🦁
-  </h2>
-
-  <p class="text-gray-700 mb-8">
-    Découvrez les animaux d’Afrique, explorez leurs habitats et participez
-    à des visites guidées éducatives.
-  </p>
+  <h2 class="text-2xl font-bold mb-6">Animaux</h2>
 
   <div class="grid grid-cols-3 gap-6">
-    <div class="bg-white p-6 rounded shadow">
-      <h3 class="font-bold">🐾 Animaux</h3>
-      <p>Explorez toutes les espèces africaines.</p>
+    <div class="bg-white p-4 rounded shadow">
+      <img src="lion.jpg" class="h-40 w-full object-cover rounded">
+      <p class="mt-2 font-bold">Lion</p>
+      <p>Savane – Maroc</p>
     </div>
-    <div class="bg-white p-6 rounded shadow">
-      <h3 class="font-bold">🧭 Visites guidées</h3>
-      <p>Réservez des parcours éducatifs.</p>
-    </div>
-    <div class="bg-white p-6 rounded shadow">
-      <h3 class="font-bold">🦁 Lion de l’Atlas</h3>
-      <p>Espèce emblématique du Maroc.</p>
+
+    <div class="bg-white p-4 rounded shadow">
+      <img src="elephant.jpg" class="h-40 w-full object-cover rounded">
+      <p class="mt-2 font-bold">Éléphant</p>
+      <p>Savane – Afrique</p>
     </div>
   </div>
 </main>
-
-</body>
-</html>

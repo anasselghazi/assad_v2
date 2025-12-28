@@ -1,86 +1,56 @@
  <?php
-// inscription.php - Challenge 4 COMPLET
 require_once '../classes/database.php';
 require_once '../classes/utilisateur.php';
 
-// 1️⃣ TRAITEMENT DU FORMULAIRE (si soumis)
-$erreurs = [];
-$success = '';
+$errors = [];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
-    // 2️⃣ RÉCUPÉRER LES DONNÉES
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['signup'])) {
     $nom = trim($_POST['nom'] ?? '');
     $email = trim($_POST['email'] ?? '');
-    $mot_de_passe = $_POST['mot_de_passe'] ?? '';
-    $confirm_mot_de_passe = $_POST['confirm_mot_de_passe'] ?? '';
-    $role = $_POST['role'] ?? 'VISITEUR';
+    $password = $_POST['password'] ?? '';
+    $confirm_password = $_POST['confirm_password'] ?? '';
+    $role = $_POST['role'] ?? '';
+
+    if (empty($nom)) $errors['nom'] = "Le nom est obligatoire";
+    if (empty($email)) $errors['email'] = "L'email est obligatoire";
+    if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors['email'] = "Format invalide";
     
-    // 3️⃣ VALIDATIONS CÔTÉ SERVEUR
-    if (empty($nom)) {
-        $erreurs['nom'] = 'Le nom est obligatoire.';
+    if ($password !== $confirm_password) $errors['confirm_password'] = "Les mots de passe ne correspondent pas";
+    
+    $password_regex = "/^(?=.*[A-Z])(?=.*\d).{8,}$/";
+    if (!preg_match($password_regex, $password)) {
+        $errors['password'] = "8 caractères, 1 Majuscule, 1 Chiffre minimum.";
     }
-    
-    if (empty($email)) {
-        $erreurs['email'] = 'L\'email est obligatoire.';
-    } elseif (!preg_match('/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', $email)) {
-        $erreurs['email'] = 'Format email invalide.';
-    }
-    
-    if (empty($mot_de_passe)) {
-        $erreurs['mot_de_passe'] = 'Le mot de passe est obligatoire.';
-    } elseif (strlen($mot_de_passe) < 8) {
-        $erreurs['mot_de_passe'] = 'Minimum 8 caractères.';
-    } elseif (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/', $mot_de_passe)) {
-        $erreurs['mot_de_passe'] = '1 majuscule + 1 minuscule + 1 chiffre.';
-    }
-    
-    if ($mot_de_passe !== $confirm_mot_de_passe) {
-        $erreurs['confirm_mot_de_passe'] = 'Les mots de passe ne correspondent pas.';
-    }
-    
-    // 4️⃣ SI AUCUNE ERREUR → CRÉER UTILISATEUR
-    if (empty($erreurs)) {
-        // Hasher le mot de passe
-        $mot_passe_hash = password_hash($mot_de_passe, PASSWORD_DEFAULT);
-        
-        // Définir approuve selon rôle
-        $approuve = ($role === 'GUIDE') ? 0 : 1;
-        
-        // Créer objet Utilisateur
-        $Utilisateur = new utilisateur(
-            null, $nom, $email, $role,
-            $mot_passe_hash, 1, $approuve
-        );
-        
-        // Enregistrer en base
-        if ($Utilisateur->cree()) {
-            $success = "✅ Inscription réussie ! ID: " . $Utilisateur->getId();
+
+    if (empty($errors)) {
+        $user = new utilisateur();
+        if ($user->trouverParEmail($email)) {
+            $errors['email'] = "Email déjà utilisé";
         } else {
-            $erreurs['general'] = 'Erreur lors de l\'inscription.';
+            $user->setNom($nom);
+            $user->setEmail($email);
+            $user->setRole($role);
+            $user->setApprouve($role === 'guide' ? 0 : 1);
+            $user->setMotPasshash(password_hash($password, PASSWORD_DEFAULT));
+
+            if ($user->cree()) {
+                header("Location: connexion.php?success=1");
+                exit();
+            } else {
+                $errors['global'] = "Erreur base de données.";
+            }
         }
     }
 }
 ?>
+
+
+
+
  
  
  
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+
  
  
  
@@ -138,27 +108,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     </div>
 </div>
-
-<!-- SIGNUP POPUP -->
-<div id="signupModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50">
+<!-- sign up-->
+<div id="signupModal" class="fixed inset-0 bg-black bg-opacity-60 <?php echo isset($_POST['signup']) ? 'flex' : 'hidden'; ?> items-center justify-center z-50">
     <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 relative">
         <button onclick="closeSignup()" class="absolute top-3 right-4 text-gray-500 hover:text-red-600 text-lg font-bold">✕</button>
         <h2 class="text-2xl font-bold text-green-700 mb-4 text-center">Créer un compte</h2>
-       <form method="POST" action="inscription.php" class="space-y-4">
-    <input type="text" name="nom" placeholder="Nom complet" class="w-full border rounded-lg p-2" required>
-    <input type="email" name="email" placeholder="Email" class="w-full border rounded-lg p-2" required>
-    <input type="password" name="motpasse" placeholder="Mot de passe" class="w-full border rounded-lg p-2" required>
-    <input type="password" name="confirm_motpasse" placeholder="Confirmer mot de passe" class="w-full border rounded-lg p-2" required>
-    <select name="role" class="w-full border rounded-lg p-2" required>
-        <option value="">Sélectionnez le rôle</option>
-        <option value="visiteur">Visiteur</option>
-        <option value="guide">Guide</option>
-    </select>
-    <button type="submit" name="signup" class="w-full bg-green-500 text-white p-2 rounded-lg font-semibold">S'inscrire</button>
-</form>
+        
+        <form method="POST" action="inscription.php" class="space-y-4">
+            
+            <div>
+                <input type="text" name="nom" placeholder="Nom complet" 
+                       value="<?php echo $_POST['nom'] ?? ''; ?>" 
+                       class="w-full border rounded-lg p-2 <?php echo isset($errors['nom']) ? 'border-red-500' : 'border-gray-300'; ?>">
+                <?php if(isset($errors['nom'])): ?>
+                    <p class="text-red-500 text-xs mt-1"><?php echo $errors['nom']; ?></p>
+                <?php endif; ?>
+            </div>
 
+            <div>
+                <input type="email" name="email" placeholder="Email" 
+                       value="<?php echo $_POST['email'] ?? ''; ?>" 
+                       class="w-full border rounded-lg p-2 <?php echo isset($errors['email']) ? 'border-red-500' : 'border-gray-300'; ?>">
+                <?php if(isset($errors['email'])): ?>
+                    <p class="text-red-500 text-xs mt-1"><?php echo $errors['email']; ?></p>
+                <?php endif; ?>
+            </div>
 
+            <div>
+                <input type="password" name="password" placeholder="Mot de passe" 
+                       class="w-full border rounded-lg p-2 <?php echo isset($errors['password']) ? 'border-red-500' : 'border-gray-300'; ?>">
+                <?php if(isset($errors['password'])): ?>
+                    <p class="text-red-500 text-xs mt-1"><?php echo $errors['password']; ?></p>
+                <?php endif; ?>
+            </div>
 
+            <div>
+                <input type="password" name="confirm_password" placeholder="Confirmer mot de passe" 
+                       class="w-full border rounded-lg p-2 <?php echo isset($errors['confirm_password']) ? 'border-red-500' : 'border-gray-300'; ?>">
+                <?php if(isset($errors['confirm_password'])): ?>
+                    <p class="text-red-500 text-xs mt-1"><?php echo $errors['confirm_password']; ?></p>
+                <?php endif; ?>
+            </div>
+
+            <select name="role" class="w-full border rounded-lg p-2" required>
+                <option value="visiteur">Visiteur</option>
+                <option value="guide">Guide</option>
+            </select>
+            
+            <button type="submit" name="signup" class="w-full bg-green-500 text-white p-2 rounded-lg font-semibold hover:bg-green-600 transition">S'inscrire</button>
+        </form>
     </div>
 </div>
 
