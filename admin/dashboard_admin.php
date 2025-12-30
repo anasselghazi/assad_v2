@@ -38,12 +38,12 @@
                 👥 <span>Utilisateurs</span>
             </a>
 
-            <a href="animal.php"
+            <a href="dashboard_animal.php"
                class="flex items-center gap-3 hover:bg-green-600 transition p-3 rounded-xl">
                 🐾 <span>Animaux</span>
             </a>
 
-            <a href="habitat.php"
+            <a href="dashboard_habitat.php"
                class="flex items-center gap-3 hover:bg-green-600 transition p-3 rounded-xl">
                 🌍 <span>Habitats</span>
             </a>

@@ -1,9 +1,5 @@
  <?php
-session_start();
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header('Location: index.php');
-    exit();
-}
+ 
 
 require_once '../classes/database.php';
 require_once '../classes/animal.php';
@@ -20,7 +16,7 @@ if (isset($_POST['submit'])) {
         $_POST['image'], $_POST['pays_origine'], $_POST['description'],
         $_POST['id_habitat']
     );
-    header('Location: admin_animaux.php');
+    header('Location: dashboard_animal.php');
     exit();
 }
 
@@ -31,14 +27,14 @@ if (isset($_POST['update'])) {
         $_POST['edit_alimentation'], $_POST['edit_image'], $_POST['edit_pays_origine'],
         $_POST['edit_description'], $_POST['edit_id_habitat']
     );
-    header('Location: admin_animaux.php');
+    header('Location: dashboard_animal.php');
     exit();
 }
 
 // SUPPRIMER
 if (isset($_POST['delete'])) {
     Animal::supprimer($_POST['id_animal']);
-    header('Location: admin_animaux.php');
+    header('Location: dashboard_animal.php');
     exit();
 }
 ?>
@@ -64,8 +60,8 @@ if (isset($_POST['delete'])) {
         <nav class="flex flex-col gap-4 text-sm font-semibold">
             <a href="dashboard_admin.php" class="flex items-center gap-3 bg-green-600 p-3 rounded-xl">🏠 Dashboard</a>
             <a href="admin_utilisateurs.php" class="flex items-center gap-3 hover:bg-green-600 p-3 rounded-xl">👥 Utilisateurs</a>
-            <a href="admin_animaux.php" class="flex items-center gap-3 bg-green-600 p-3 rounded-xl">🐾 Animaux</a>
-            <a href="admin_habitats.php" class="flex items-center gap-3 hover:bg-green-600 p-3 rounded-xl">🌍 Habitats</a>
+            <a href="dashboard_animal.php" class="flex items-center gap-3 bg-green-600 p-3 rounded-xl">🐾 Animaux</a>
+            <a href="dashboard_habitat.php" class="flex items-center gap-3 hover:bg-green-600 p-3 rounded-xl">🌍 Habitats</a>
             <a href="statistiques.php" class="flex items-center gap-3 hover:bg-green-600 p-3 rounded-xl">📊 Statistiques</a>
             <a href="logout.php" class="flex items-center gap-3 hover:bg-green-600 p-3 rounded-xl">🚪 Déconnexion</a>
         </nav>

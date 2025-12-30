@@ -6,7 +6,7 @@ if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
 }
 
 require_once '../classes/database.php';
-require_once '../classes/Habitat.php';
+require_once '../classes/habitat.php';
 
 // ----- GESTION ACTIONS CRUD -----
 $habitats = (new Habitat())->listerTous();
@@ -16,7 +16,7 @@ if (isset($_POST['submit'])) {
     Habitat::creer(
         $_POST['nom_habitat'], $_POST['type_climat'], $_POST['description'], $_POST['zone_zoo']
     );
-    header('Location: admin_habitats.php');
+    header('Location: dashboard_habitat.php');
     exit();
 }
 
@@ -26,14 +26,14 @@ if (isset($_POST['update'])) {
         $_POST['edit_id'], $_POST['edit_nom'], $_POST['edit_type_climat'],
         $_POST['edit_description'], $_POST['edit_zone_zoo']
     );
-    header('Location: admin_habitats.php');
+    header('Location: dashboard_habitat.php');
     exit();
 }
 
 // SUPPRIMER
 if (isset($_POST['delete'])) {
     Habitat::supprimer($_POST['id_habitat']);
-    header('Location: admin_habitats.php');
+    header('Location: dashboard_habitat.php');
     exit();
 }
 ?>
@@ -58,8 +58,8 @@ if (isset($_POST['delete'])) {
         </div>
         <nav class="flex flex-col gap-4 text-sm font-semibold">
             <a href="dashboard_admin.php" class="p-3 bg-green-600 rounded-xl">🏠 Dashboard</a>
-            <a href="admin_animaux.php" class="p-3 hover:bg-green-600 rounded-xl">🐾 Animaux</a>
-            <a href="admin_habitats.php" class="p-3 bg-green-600 rounded-xl">🌍 Habitats</a>
+            <a href="dashboard_animal.php" class="p-3 hover:bg-green-600 rounded-xl">🐾 Animaux</a>
+            <a href="dashboard_habitat.php" class="p-3 bg-green-600 rounded-xl">🌍 Habitats</a>
             <a href="admin_utilisateurs.php" class="p-3 hover:bg-green-600 rounded-xl">👥 Utilisateurs</a>
             <a href="logout.php" class="p-3 hover:bg-green-600 rounded-xl">🚪 Déconnexion</a>
         </nav>
