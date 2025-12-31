@@ -23,7 +23,7 @@ class Animal {
         $this->id_habitat    = $id_habitat;
     }
 
-    // 👇 TES GETTERS (parfaits)
+    //  TES GETTERS 
     public function getId() { return $this->id_animal; }
     public function getNom() { return $this->nom; }
     public function getEspece() { return $this->espece; }
@@ -33,7 +33,7 @@ class Animal {
     public function getDescription() { return $this->description; }
     public function getIdHabitat() { return $this->id_habitat; }
 
-    // 👇 TES SETTERS (parfaits)
+    //  TES SETTERS 
     public function setId($id) { $this->id_animal = $id; }
     public function setNom($nom) { $this->nom = $nom; }
     public function setEspece($espece) { $this->espece = $espece; }
@@ -43,7 +43,7 @@ class Animal {
     public function setDescription($description) { $this->description = $description; }
     public function setIdHabitat($id_habitat) { $this->id_habitat = $id_habitat; }
 
-    // 👇 TES METHODES EXISTANTES (parfaites)
+    // TES METHODES EXISTANTES 
     public static function listerTous() {
         $db = new Database();
         $pdo = $db->getPdo();
@@ -68,7 +68,7 @@ class Animal {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // 🔥 NOUVELLES MÉTHODES CRUD POUR ADMIN
+    // 
     public static function creer($nom, $espece, $alimentation, $image, $pays_origine, $description, $id_habitat) {
         $db = new Database();
         $pdo = $db->getPdo();

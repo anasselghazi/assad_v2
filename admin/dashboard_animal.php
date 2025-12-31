@@ -74,7 +74,6 @@ if (isset($_POST['delete'])) {
     <main class="flex-1 p-8">
         <header class="bg-white rounded-2xl shadow p-6 mb-8 text-center">
             <h1 class="text-3xl font-bold text-green-800">Gestion des Animaux</h1>
-            <p class="text-gray-600">CRUD complet avec classes POO + PDO</p>
         </header>
 
         <div class="flex justify-end mb-6">
